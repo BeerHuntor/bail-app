@@ -14,15 +14,12 @@
 
 
     <title>{% block pagetitle %}{% endblock pagetitle %} | Unique PD</title>
-    <style>
-        .nav-pills {
-            width: 100%;
-        }
-    </style>
+    
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
+            <!--SIDEBAR NAVIGATION-->
             <div class="col-auto min-vh-100 nav-bg">
                 <div class="pt-4 pb-1 px-2">
                     <a class="navbar-brand d-flex align-items-center" href="">
@@ -62,10 +59,14 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-auto">
+            <!--MAIN CONTENT-->
+            <div class="col">
                 {% block content %}
                 
                 {% endblock content %}
+                <div class="row align-self-end footer">
+                    <span class="fs-6 d-inline text-center p-5">Unique RP 2024 | Created by BeerHuntor</span>
+                </div>
             </div>
         </div>
     </div>    
