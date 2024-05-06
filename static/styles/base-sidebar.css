@@ -2,6 +2,38 @@ body {
     background-color: #cacaca;
 }
 
+/* LOGGED OUT LANDING PAGE */ 
+.landing-page {
+    background-image: url('/static/images/landing-page-background-image.png/');
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    padding-top: 100px;
+    padding-bottom: 100px;
+
+}
+
+.nav-bar-logo {
+    width: 50px;
+    height: 50px;
+}
+
+.btn-primary {
+    background: rgb(29, 54, 136);
+    border: 2px solid white;
+}
+
+.btn-secondary {
+    background: white; 
+    color: rgb(29, 54, 136);
+    border: 2px solid white;
+}
+
+.landing-btns {
+    margin-top: 20px;
+}
+/* LOGGED IN NAV SIDEBAR */
 .divider {
     border: 3px solid white;
     display: flex;

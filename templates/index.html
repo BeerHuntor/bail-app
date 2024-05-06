@@ -1,7 +1,19 @@
 {% extends "base-sidebar.html" %}
+{% load static %}
 
 {% block pagetitle %}Home{% endblock pagetitle %}
 
-{% block content %}
-    <h1>Homepage</h1>
-{% endblock content %}
+{% block logged_out_content %}
+    <!--LOGO MAIN CONTENT-->
+    <div class="container-fluid landing-page">
+        <div class="row d-flex justify-content-center">
+            <img class="self-align-center w-25 h-25 pt-3" src="{% static 'images/pd-logo.png' %}" alt="unique-pd-logo.png">
+            <span class="fs-4 text-center text-white pt-3">To Protect And Serve</span>
+        </div>
+        {% comment %} <!--ACTION BUTTONS-->
+        <div class="row d-flex justify-content-center landing-btns">
+            <div class="col-auto"><a class="" href=""><button class="btn btn-dark mb-5" type="button">Register</button></a></div>
+            <div class="col-auto"><a class= ""href=""><button class="btn btn-dark" type= "button">Login</button></a></div>
+        </div> {% endcomment %}
+    </div>
+{% endblock logged_out_content %} 
