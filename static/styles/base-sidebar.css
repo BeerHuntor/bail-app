@@ -1,0 +1,28 @@
+.divider {
+    border: 3px solid white;
+    display: flex;
+}
+.nav-item-divider {
+    border: 1px solid white;
+    padding-top: 0;
+    margin: 0.5em;
+}
+
+.nav-bg {
+    background-color: rgb(29, 54, 136);
+}
+.nav-pills {
+    width:100%;
+    --bs-nav-pills-link-active-bg: rgb(86, 99, 139);
+}
+
+.brand-text {
+    display: inline-flex;
+    color:white;
+    font-size: 1.25em;
+    padding-left: 10px;
+    margin-top: 20px
+}
+.navbar-brand {
+    justify-content: center;
+}
