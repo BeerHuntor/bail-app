@@ -29,31 +29,55 @@
                     <hr class="divider mt-3">
                     <ul class="nav nav-pills flex-column mb-auto nav-justified">
                         <li class="nav-item">
-                            <a href="#" class="nav-link active text-white fs-5">Home</a>
+                            <a href="{% url 'index' %}" class="nav-link 
+                            {% if active_tab == 'index' %}
+                                active
+                            {% endif %}
+                                  active text-white fs-5">Home</a>
                             <hr class="nav-item-divider">
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-white fs-5">Dashboard</a>
+                            <a href="{% url 'index' %}" class="nav-link 
+                            {% if active_tab == 'dashboard' %}
+                                active
+                            {% endif %}
+                                 text-white fs-5">Dashboard</a>
                             <hr class="nav-item-divider">
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-white fs-5">Bail Search</a>
+                            <a href="#" class="nav-link 
+                            {% if active_tab == 'bail_search' %}
+                                active
+                            {% endif %}
+                                 text-white fs-5">Bail Search</a>
                             <hr class="nav-item-divider">
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-white fs-5">Person Search</a>
+                            <a href="#" class="nav-link 
+                            {% if active_tab == 'person_search' %}
+                                active
+                            {% endif %}
+                                 text-white fs-5">Person Search</a>
                             <hr class="nav-item-divider">
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-white fs-5">Timesheets</a>
+                            <a href="#" class="nav-link 
+                            {% if active_tab == 'timesheets' %}
+                                active
+                            {% endif %}
+                                 text-white fs-5">Timesheets</a>
                             <hr class="nav-item-divider">
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-white fs-5">Profile</a>
+                            <a href="#" class="nav-link 
+                            {% if active_tab == 'profile' %}
+                                active
+                            {% endif %}
+                                 text-white fs-5">Profile</a>
                             <hr class="nav-item-divider">
                         </li>                           
                         <li class="nav-item">
-                            <a href="#" class="nav-link text-white fs-5">Admin</a>
+                            <a href="{% url 'admin:login' %}" class="nav-link text-white fs-5">Admin</a>
                             <hr class="nav-item-divider">
                         </li>
                     </ul>
