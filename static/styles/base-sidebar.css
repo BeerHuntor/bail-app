@@ -27,7 +27,11 @@ body {
 .btn-secondary {
     background: white; 
     color: rgb(29, 54, 136);
-    border: 2px solid white;
+    border: 2px solid white
+}
+/* MODALS */
+.btn-secondary-modal { 
+    border: 2px solid rgb(29, 54, 136)
 }
 
 .landing-btns {
