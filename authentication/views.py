@@ -4,7 +4,8 @@ from authentication.forms import LoginModalForm
 
 # Create your views here.
 def index_view (request): 
-    return render(request, 'authentication/index.html')
+    form = LoginModalForm()
+    return render(request, 'authentication/index.html', {'form' : form})
 
 def login_modal (request):
     if request.method == 'POST':
