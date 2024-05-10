@@ -30,15 +30,15 @@
                         <hr class="divider mt-3">
                         <ul class="nav nav-pills flex-column mb-auto nav-justified">
                             <li class="nav-item">
-                                <a href="{% url 'index' %}" class="nav-link 
-                                {% if active_tab == 'index' %}
+                                <a href="{% url 'authentication:index' %}" class="nav-link 
+                                {% if active_tab == 'authentication:index' %}
                                     active
                                 {% endif %}
                                     active text-white fs-5">Home</a>
                                 <hr class="nav-item-divider">
                             </li>
                             <li class="nav-item">
-                                <a href="{% url 'index' %}" class="nav-link 
+                                <a href="{% url 'authentication:index' %}" class="nav-link 
                                 {% if active_tab == 'dashboard' %}
                                     active
                                 {% endif %}
@@ -134,13 +134,16 @@
                   <h1 class="modal-title fs-5 text-center" id="staticBackdropLabel">Login</h1>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    {% include 'authentication/login_form.html' %}
-                </div>
-                <div class="modal-footer d-flex justify-content-center">
-                  <button type="submit" class="btn btn-secondary btn-secondary-modal" data-bs-dismiss="modal">Login</button>
-                  <button type="button" class="btn btn-primary">Close</button>
-                </div>
+                <form action="{% url 'authentication:login' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        {% include 'authentication/login_form.html' %}
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="submit" class="btn btn-secondary btn-secondary-modal" data-bs-dismiss="modal">Login</button>
+                        <button type="button" class="btn btn-primary">Close</button>                
+                    </div>
+                </form>
               </div>
             </div>
         </div>

@@ -1,5 +1,11 @@
-<form action="{% url 'authentication:login' %}" method="post">
-    {% csrf_token %}
-    {{form.as_p}}
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
+    <div class="container">
+        <div class="mb-3">
+            {{form.username.label_tag}}
+            {{form.username}}
+        </div>
+        <div class="mb-3">
+            {{form.password.label_tag}}
+            {{form.password}}
+        </div>
+    </div>
+
