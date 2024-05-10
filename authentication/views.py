@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login
 from authentication.forms import LoginModalForm
 
@@ -18,9 +19,12 @@ def login_modal (request):
 
             if user:
                 login(request, user)
-                return redirect('index')
+                return redirect(reverse_lazy('authentication:index'))
             else:
-                print("login invalid")
+                print("not a registered user")
+        else:
+            print("login invalid")
+
 
     else: 
         form = LoginModalForm()
