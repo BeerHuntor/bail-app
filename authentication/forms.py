@@ -19,7 +19,7 @@ class UserForm(forms.ModelForm):
 
     class Meta():
         model = User
-        fields = ('username', 'password')
+        fields = ('username',)
 
 class RegsisterModalForm(forms.ModelForm):
     profile_picture = forms.ImageField(required=False)
