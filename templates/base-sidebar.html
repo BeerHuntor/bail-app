@@ -31,55 +31,45 @@
                         <ul class="nav nav-pills flex-column mb-auto nav-justified">
                             <li class="nav-item">
                                 <a href="{% url 'authentication:index' %}" class="nav-link 
-                                {% if active_tab == 'authentication:index' %}
-                                    active
-                                {% endif %}
                                     active text-white fs-5">Home</a>
                                 <hr class="nav-item-divider">
                             </li>
                             
                             {% if user_profile.is_police %}
                                 <li class="nav-item">
-                                    <a href="{% url 'authentication:index' %}" class="nav-link 
-                                    {% if active_tab == 'dashboard' %}
-                                        active
-                                    {% endif %}
-                                        text-white fs-5">Dashboard</a>
+                                    <a href="{% url 'authentication:index' %}" class="nav-link text-white fs-5">Dashboard</a>
                                     <hr class="nav-item-divider">
                                 </li>
                             {% endif %}
                             <li class="nav-item">
-                                <a href="#" class="nav-link 
-                                {% if active_tab == 'bail_search' %}
-                                    active
-                                {% endif %}
-                                    text-white fs-5">Bail Search</a>
+                                <a href="#nestedNav1" class="nav-link text-white fs-5" 
+                                data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="nestedNav1">Bails</a>
+                                    <ul class="nested-nav collapse nav nav-pills flex-column mb-auto nav-justified" id="nestedNav1">
+                                        <li><a href="#" class="nav-link text-white fs-6">Bail Search</a></li>
+                                        {% if user_profile.is_police %}
+                                            <li><a href="#" class="nav-link text-white fs-6">Create A Bail</a></li>
+                                        {% endif %}
+                                    </ul>
                                 <hr class="nav-item-divider">
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link 
-                                {% if active_tab == 'person_search' %}
-                                    active
-                                {% endif %}
-                                    text-white fs-5">Person Search</a>
+                                <a href="#nestedNav2" class="nav-link text-white fs-5" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="nestedNav2">Persons</a>
+                                    <ul class="nested-nav collapse nav nav-pills flex-column mb-auto nav-justified" id="nestedNav2">
+                                        <li><a href="#" class="nav-link text-white fs-6">Person Search</a></li>
+                                        {% if user_profile.is_police %}
+                                            <li><a href="#" class="nav-link text-white fs-6">Register A Person</a></li>
+                                        {% endif %}
+                                    </ul>
                                 <hr class="nav-item-divider">
                             </li>
                             {% if user_profile.is_police %}
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link 
-                                    {% if active_tab == 'timesheets' %}
-                                        active
-                                    {% endif %}
-                                        text-white fs-5">Timesheets</a>
+                                    <a href="#" class="nav-link text-white fs-5">Timesheets</a>
                                     <hr class="nav-item-divider">
                                 </li>                              
                             {% endif %}
                             <li class="nav-item">
-                                <a href="#" class="nav-link 
-                                {% if active_tab == 'profile' %}
-                                    active
-                                {% endif %}
-                                    text-white fs-5">Profile</a>
+                                <a href="#" class="nav-link text-white fs-5">Profile</a>
                                 <hr class="nav-item-divider">
                             </li>                         
                             <li class="nav-item">
@@ -181,8 +171,9 @@
             <span class="fs-6 d-inline text-center p-5">Unique RP 2024 | Created by BeerHuntor</span>
         </div>
     {% endif %}
-
-
+    <!--JQuery Library CDN-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="static/scripts/sidebar-nav-active-script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 </body>
