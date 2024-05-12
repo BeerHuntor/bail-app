@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login
 from authentication.forms import LoginModalForm, UserForm, UserProfileInformation
 from django.views.generic.edit import FormView
 
+auth_redirect_url = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2F&scope=identify+guilds+connections'
+
 # Create your views here.
 def index_view (request): 
     form = LoginModalForm()
