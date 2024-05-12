@@ -2,7 +2,7 @@ from authentication.models import UserProfileInformation
 
 # Context processors allow context to be sent with any request automatically,  so this instance is getting the UserProfielInformation model and passing it to every request to 
 # enable access for every template by default. 
-def user(request):
+def user_profile(request):
     user_profile = None
     
     if request.user.is_authenticated:

@@ -37,14 +37,17 @@
                                     active text-white fs-5">Home</a>
                                 <hr class="nav-item-divider">
                             </li>
-                            <li class="nav-item">
-                                <a href="{% url 'authentication:index' %}" class="nav-link 
-                                {% if active_tab == 'dashboard' %}
-                                    active
-                                {% endif %}
-                                    text-white fs-5">Dashboard</a>
-                                <hr class="nav-item-divider">
-                            </li>
+                            
+                            {% if user_profile.is_police %}
+                                <li class="nav-item">
+                                    <a href="{% url 'authentication:index' %}" class="nav-link 
+                                    {% if active_tab == 'dashboard' %}
+                                        active
+                                    {% endif %}
+                                        text-white fs-5">Dashboard</a>
+                                    <hr class="nav-item-divider">
+                                </li>
+                            {% endif %}
                             <li class="nav-item">
                                 <a href="#" class="nav-link 
                                 {% if active_tab == 'bail_search' %}
@@ -61,14 +64,16 @@
                                     text-white fs-5">Person Search</a>
                                 <hr class="nav-item-divider">
                             </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link 
-                                {% if active_tab == 'timesheets' %}
-                                    active
-                                {% endif %}
-                                    text-white fs-5">Timesheets</a>
-                                <hr class="nav-item-divider">
-                            </li>
+                            {% if user_profile.is_police %}
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link 
+                                    {% if active_tab == 'timesheets' %}
+                                        active
+                                    {% endif %}
+                                        text-white fs-5">Timesheets</a>
+                                    <hr class="nav-item-divider">
+                                </li>                              
+                            {% endif %}
                             <li class="nav-item">
                                 <a href="#" class="nav-link 
                                 {% if active_tab == 'profile' %}
@@ -76,9 +81,9 @@
                                 {% endif %}
                                     text-white fs-5">Profile</a>
                                 <hr class="nav-item-divider">
-                            </li>                           
+                            </li>                         
                             <li class="nav-item">
-                                <a href="{% url 'admin:login' %}" class="nav-link text-white fs-5">Admin</a>
+                                <a href="#" class="nav-link text-white fs-5">Link Discord</a>
                                 <hr class="nav-item-divider">
                             </li>
                         </ul>
@@ -89,6 +94,7 @@
                     {% block content %}
                     
                     {% endblock content %}
+                    {{ user_profile }}
                     <!--FOOTER-->
                     <div class="row align-self-end footer">
                         <span class="fs-6 d-inline text-center p-5">Unique RP 2024 | Created by BeerHuntor</span>
@@ -96,6 +102,7 @@
                 </div>
             </div>
         </div>    
+        <!-- USER IS NOT LOGGED IN -->
     {% else %}
         <nav class="navbar navbar-expand-sm navbar-collapse navbar-dark nav-bg border-bottom border-white">
             <div class="container-fluid">
