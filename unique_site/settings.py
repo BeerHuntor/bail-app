@@ -123,10 +123,11 @@ AUTHENTICATION_BACKENDS = [
 SOCIALACCOUNT_PROVIDERS = {
     'discord' : {
         'APP' : {
-            'client_id' : 'xxx',
-            'secret' : 'xxx',
+            'client_id' : '1228365653254209606',
+            'secret' : 'SOC-wPZgwX1GjaGgQecwc1ZF8ENMn453',
             'key' : '', 
-        }
+            'scope' : ['identify', 'guilds'],
+        },
     }
 }
 # Internationalization

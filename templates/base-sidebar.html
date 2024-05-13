@@ -1,3 +1,5 @@
+{% load socialaccount %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,7 +75,7 @@
                                 <hr class="nav-item-divider">
                             </li>                         
                             <li class="nav-item">
-                                <a href="#" class="nav-link text-white fs-5">Link Discord</a>
+                                <a href="{% url 'discord_login' %}" class="nav-link text-white fs-5">Link Discord</a>
                                 <hr class="nav-item-divider">
                             </li>
                         </ul>
