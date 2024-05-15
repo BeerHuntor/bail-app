@@ -91,7 +91,6 @@ def discord_callback(request):
             print('Error:', response.status_code, response.text)
         return redirect(reverse_lazy('authentication:index'))
     else:
-        
         return HttpResponse("There was an error: Please contact the website developer stating code: <strong>DC012</strong>")
 
 def get_discord_app_details():
@@ -162,5 +161,5 @@ def get_request_discord_api_json(endpoint, headers):
         # We have a response
         return response.json()
     else: 
-        print('ERROR: ', response.status_code, response.text)    
-
+        print('ERROR: ', response.status_code, response.text)
+        
