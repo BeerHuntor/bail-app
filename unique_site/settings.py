@@ -126,7 +126,7 @@ SOCIALACCOUNT_PROVIDERS = {
             'client_id' : '1228365653254209606',
             'secret' : 'SOC-wPZgwX1GjaGgQecwc1ZF8ENMn453',
             'key' : '', 
-            'scope' : ['identify', 'guilds'],
+            'scope' : 'identify guilds',
         },
     }
 }
