@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login
-from authentication.forms import LoginModalForm, UserForm, UserProfileInformation
+from authentication.forms import LoginModalForm, UserRegisterModalForm, UserProfileInformation
 from django.views.generic.edit import FormView
 from authentication.models import UserDiscordAccountInformation
 
@@ -23,7 +23,8 @@ LINK_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365
 
 def index_view (request): 
     form = LoginModalForm()
-    return render(request, 'authentication/index.html', {'form' : form})
+    register_form = UserRegisterModalForm()
+    return render(request, 'authentication/index.html', {'form' : form, 'register_form' : register_form})
 
 def login_modal (request):
     if request.method == 'POST':
@@ -47,21 +48,17 @@ def login_modal (request):
         form = LoginModalForm()
     return render(request, 'authentication/login_form.html', {'form': form })
 
-class RegisterModalView (FormView):
-    user_form_class = UserForm
-    profile_info_form_class = UserProfileInformation
+class UserRegisterModalView (FormView):
+    template_name = 'authetication/register_form.html'
+    form_class = UserRegisterModalForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_form'] = self.user_form_class
-        context['profile_form'] = self.profile_info_form_class
+        context['user_form'] = self.form_class()
         return context
     
     def form_valid(self, form):
-        user = form.save
-
-    def get_template_names(self):
-        return ['authentication:register']
+        user = form.save()
     
 def discord_register(request):
     return redirect(REGISTER_AUTH_REDIRECT_URI)
@@ -103,7 +100,7 @@ def discord_link_callback(request):
             access_token = response_data.get('access_token', '')
             token_expiry = calculate_token_expiry(response_data.get('expires_in', ''))
             discord_user_id = get_user_data_from_discord(access_token).get('id', '')
-            
+
             link_discord_account(request.user, discord_user_id, response_data.get('access_token', ''),  response_data.get('refresh_token', ''), token_expiry)
 
 
