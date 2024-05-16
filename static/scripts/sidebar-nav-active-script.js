@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    console.log("Sidebar JS Loaded!")
     $(".nav-link").click(function() {
         //Remove all 'active' class from all nav links
         $(".nav-link").removeClass("active");
@@ -9,14 +10,4 @@ $(document).ready(function() {
             active_tab = 'bail_search';
         }
     });
-
-    const params = new URLSearchParams(window.location.search);
-    const modal = params.get('modal');
-
-    if (modal == 'success') {
-        console.log("Showing Success Modal");
-        $('#reg_modal_success').modal('show');
-    } else {
-        console.log("Success modal parameter not found or incorrect!");
-    }
 });
