@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect, HttpResponse
-from django.urls import reverse_lazy
+from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth import authenticate, login
 from authentication.forms import LoginModalForm, UserRegisterModalForm, UserProfileInformation
 from django.views.generic.edit import FormView
@@ -59,9 +59,14 @@ class UserRegisterModalView (FormView):
     
     def form_valid(self, form):
         user = form.save()
+        return HttpResponseRedirect(self.get_success_url())
     
     def get_template_names(self):
         return 'authentication/index.html'
+    
+    def get_success_url(self):
+        print("success!")
+        return reverse('authentication:index') + '?modal=success'
     
 def discord_register(request):
     return redirect(REGISTER_AUTH_REDIRECT_URI)
@@ -108,9 +113,6 @@ def discord_link_callback(request):
 
 
             #print(get_user_discord_account_information(request.user))
-
-
-
 
         else:
             # Request Failed

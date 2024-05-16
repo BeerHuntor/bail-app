@@ -9,4 +9,14 @@ $(document).ready(function() {
             active_tab = 'bail_search';
         }
     });
+
+    const params = new URLSearchParams(window.location.search);
+    const modal = params.get('modal');
+
+    if (modal == 'success') {
+        console.log("Showing Success Modal");
+        $('#reg_modal_success').modal('show');
+    } else {
+        console.log("Success modal parameter not found or incorrect!");
+    }
 });
