@@ -14,17 +14,7 @@ class LoginModalForm(forms.Form):
                                    'class' : 'form-control'
                                })) 
 
-class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput(), max_length=25, required=True)
-
+class UserRegisterModalForm(forms.ModelForm):
     class Meta():
         model = User
-        fields = ('username',)
-
-class RegsisterModalForm(forms.ModelForm):
-    profile_picture = forms.ImageField(required=False)
-
-    class Meta():
-        model = UserProfileInformation
-        fields = ('profile_picture',)
-
+        fields = ('username', 'email', 'password')

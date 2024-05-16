@@ -72,3 +72,9 @@ body {
     background-color: #acacac;
 
 }
+
+.reg-discord-text {
+    color: black;
+    font-size: 0.75em;
+    padding-top: 10px
+}

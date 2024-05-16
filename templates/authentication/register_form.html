@@ -1,9 +1,24 @@
-<div class="container">
-    <div class="mb-3">
-        {{form.as_p}}
+{% load static %}
+<div class="container row">
+    <div class="col-6 d-flex align-items-center justify-content-center">
+        <div class="row">
+            <img src="{% static 'images/discord-logo.svg' %}" alt="discord_logo.svg">
+            <p class="reg-discord-text">Click above to register with discord.</p>
+        </div>
     </div>
-    <div class="mb-3">
-        <p>test</p>
+    <div class="col-6">
+        <div class="mb-3">
+            {{register_form.username.label_tag}}
+            {{register_form.username}}
+        </div>
+        <div class="mb-3">
+            {{register_form.email.label_tag}}
+            {{register_form.email }}
+        </div>
+        <div class="mb-3">
+            {{register_form.password.label_tag}}
+            {{register_form.password }}
+        </div>
     </div>
 </div>
 
