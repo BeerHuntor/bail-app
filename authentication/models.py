@@ -17,3 +17,4 @@ class UserDiscordAccountInformation(models.Model):
     discord_user_id = models.CharField(max_length=255)
     access_token = models.CharField(max_length=255)
     refresh_token = models.CharField(max_length=255)
+    token_expiry = models.IntegerField(default=0)
