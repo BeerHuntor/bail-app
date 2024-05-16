@@ -15,6 +15,18 @@ class LoginModalForm(forms.Form):
                                })) 
 
 class UserRegisterModalForm(forms.ModelForm):
+
     class Meta():
         model = User
         fields = ('username', 'email', 'password')
+        widgets = {
+            'username' : forms.TextInput(attrs={'class' : 'form-control',
+                                                'placeholder' : 'Enter a valid username'
+                                                }),
+            'password' : forms.PasswordInput(attrs={'class' : 'form-control',
+                                                    'placeholder' : 'Enter a valid password',
+                                                }),
+            'email' : forms.EmailInput(attrs={'class' : 'form-control',
+                                              'placeholder' : 'Enter a valid email address',
+                                              }),
+        }
