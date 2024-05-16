@@ -3,17 +3,18 @@ from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login
 from authentication.forms import LoginModalForm, UserForm, UserProfileInformation
 from django.views.generic.edit import FormView
+from authentication.models import UserDiscordAccountInformation
 
 from django.conf import settings
 from allauth.socialaccount.models import SocialAccount
 import requests
+from datetime import timedelta, datetime
 
 import json
 
 GUILD_ID = '1230652347278032936'
 TEST_GUILD_ID = '891382242729939014' # Returns code 10004 when not a member and null json. 
 TOKEN_ENDPOINT = 'https://discordapp.com/api/oauth2/token'
-ACCESS_TOKEN = ''
 
 REGISTER_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Fregister%2Fcallback&scope=identify+connections+guilds.members.read+email'
 LOGIN_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Flogin%2Fcallback&scope=identify+connections+guilds.members.read+guilds'
@@ -98,14 +99,15 @@ def discord_link_callback(request):
         if response.status_code == 200:
             # Process the response data
             response_data = response.json()
-            global ACCESS_TOKEN
-            ACCESS_TOKEN = response_data.get('access_token', '')
-            get_user_data_from_discord(ACCESS_TOKEN)
 
-            try:
-                user_role_names = get_user_guild_roles(get_user_guild(ACCESS_TOKEN))
-            except:
-                print("User Roles couldn't be found.")
+            access_token = response_data.get('access_token', '')
+            token_expiry = calculate_token_expiry(response_data.get('expires_in', ''))
+            discord_user_id = get_user_data_from_discord(access_token).get('id', '')
+            
+            link_discord_account(request.user, discord_user_id, response_data.get('access_token', ''),  response_data.get('refresh_token', ''), token_expiry)
+
+
+            #print(get_user_discord_account_information(request.user))
 
 
 
@@ -144,7 +146,7 @@ def get_user_data_from_discord(token):
     request_data = get_request_discord_api_json(user_data_endpoint, headers)
     if request_data:
         #We have something
-        pass
+        return request_data
     else:
         print("No User JSON object recieved or returned an error.")
 
@@ -185,6 +187,23 @@ def get_user_guild_roles(data):
     role_ids = data.get('roles', {})
     return role_ids
 
+def link_discord_account(user, discord_user_id, access_token, refresh_token, token_expiry):
+    user_discord_account_information = UserDiscordAccountInformation.objects.create(
+        user=user,
+        discord_user_id = discord_user_id,
+        access_token = access_token,
+        refresh_token = refresh_token,
+        token_expiry = token_expiry,
+    )
+
+    return user_discord_account_information
+
+def get_user_discord_account_information(user):
+    try:
+        return UserDiscordAccountInformation.objects.get(user=user)
+    except UserDiscordAccountInformation.DoesNotExist:
+        return None
+
 def get_role_name_by_id (role_id, guild_roles):
     for role in guild_roles:
         if role['id'] == role_id:
@@ -201,4 +220,9 @@ def get_request_discord_api_json(endpoint, headers):
     else: 
         print('ERROR: ', response.status_code, response.text)
 
-        
+def calculate_token_expiry(expires_in):
+    current_time = datetime.now()
+
+    duration = timedelta(seconds=expires_in)
+
+    return current_time + duration
