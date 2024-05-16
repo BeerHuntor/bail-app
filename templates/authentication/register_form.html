@@ -15,16 +15,23 @@
             <div class="mb-3">
                 {{register_form.email.label_tag}}
                 {{register_form.email }}
+                {{register_form.email.errors}}
             </div>
             <div class="mb-3">
-                {{register_form.password.label_tag}}
-                {{register_form.password }}
+                {{register_form.password1.label_tag}}
+                {{register_form.password1 }}
+                {{register_form.password1.errors}}
+            </div>
+            <div class="mb-3">
+                {{register_form.password2.label_tag}}
+                {{register_form.password2 }}
+                {{register_form.password2.errors}}
                 <p class="form-info">Password Requirements: 8 characters minimum, must contain one numeric (0-9), one Uppercase (A-Z) and one lowercase (a-z)</p>
             </div>
         </div>
     </div>
     <div class="row justify-content-center">
-        <input class="form-control btn-secondary btn-secondary-modal" type="submit" id="register-submit-btn" value="Register">
+        <input class="form-control btn-secondary btn-secondary-modal" type="submit" id="register-submit-btn" value="Register" disabled>
     </div>
 </div>
 

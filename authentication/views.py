@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import authenticate, login
-from authentication.forms import LoginModalForm, UserRegisterModalForm, UserProfileInformation
+from authentication.forms import LoginModalForm, UserRegisterModalForm
 from django.views.generic.edit import FormView
 from authentication.models import UserDiscordAccountInformation
 
