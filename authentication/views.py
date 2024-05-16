@@ -49,7 +49,7 @@ def login_modal (request):
     return render(request, 'authentication/login_form.html', {'form': form })
 
 class UserRegisterModalView (FormView):
-    template_name = 'authetication/register_form.html'
+    template_name = 'authetication/index.html'
     form_class = UserRegisterModalForm
 
     def get_context_data(self, **kwargs):
@@ -59,6 +59,9 @@ class UserRegisterModalView (FormView):
     
     def form_valid(self, form):
         user = form.save()
+    
+    def get_template_names(self):
+        return 'authentication/index.html'
     
 def discord_register(request):
     return redirect(REGISTER_AUTH_REDIRECT_URI)
