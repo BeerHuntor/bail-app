@@ -15,8 +15,11 @@ TEST_GUILD_ID = '891382242729939014' # Returns code 10004 when not a member and 
 TOKEN_ENDPOINT = 'https://discordapp.com/api/oauth2/token'
 ACCESS_TOKEN = ''
 
-auth_redirect_url = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Flogin%2Fcallback&scope=identify+connections+guilds.members.read+guilds'
+REGISTER_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Fregister%2Fcallback&scope=identify+connections+guilds.members.read+email'
+LOGIN_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Flogin%2Fcallback&scope=identify+connections+guilds.members.read+guilds'
+LINK_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Flink%2Fcallback&scope=identify+connections+guilds.members.read+email'
 # Create your views here.
+
 def index_view (request): 
     form = LoginModalForm()
     return render(request, 'authentication/index.html', {'form' : form})
@@ -59,11 +62,23 @@ class RegisterModalView (FormView):
     def get_template_names(self):
         return ['authentication:register']
     
-def discord_login(request):
-    return redirect(auth_redirect_url)
+def discord_register(request):
+    return redirect(REGISTER_AUTH_REDIRECT_URI)
 
-def discord_callback(request):
-    redirect_uri = request.build_absolute_uri('/accounts/discord/login/callback')
+def discord_register_callback(request):
+    pass
+
+def discord_login(request):
+    return redirect(LOGIN_AUTH_REDIRECT_URI)
+
+def discord_login_callback(request):
+    pass
+
+def discord_link(request):
+    return redirect(LINK_AUTH_REDIRECT_URI)
+
+def discord_link_callback(request):
+    redirect_uri = request.build_absolute_uri('/accounts/discord/link/callback')
     code = request.GET.get('code')
 
     if code: 
@@ -86,6 +101,15 @@ def discord_callback(request):
             global ACCESS_TOKEN
             ACCESS_TOKEN = response_data.get('access_token', '')
             get_user_data_from_discord(ACCESS_TOKEN)
+
+            try:
+                user_role_names = get_user_guild_roles(get_user_guild(ACCESS_TOKEN))
+            except:
+                print("User Roles couldn't be found.")
+
+
+
+
         else:
             # Request Failed
             print('Error:', response.status_code, response.text)
@@ -93,6 +117,7 @@ def discord_callback(request):
     else:
         return HttpResponse("There was an error: Please contact the website developer stating code: <strong>DC012</strong>")
 
+# Gets details of the discord app
 def get_discord_app_details():
     socialaccount_providers = settings.SOCIALACCOUNT_PROVIDERS
 
@@ -108,6 +133,7 @@ def get_discord_app_details():
         'scope' : discord_scope
     }
 
+# Gets discord user data - top level
 def get_user_data_from_discord(token):
     # User Data End Point URI
     user_data_endpoint = 'https://discord.com/api/users/@me'
@@ -138,7 +164,8 @@ def get_user_guilds_info(token):
     else: 
         print('No Guilds JSON object recieved or returned an error.')
 
-def check_if_discord_guild_member(token):
+# Gets user model from PD discord guild. 
+def get_user_guild(token):
     # Guild Information
     guild_member_endpoint = f'https://discord.com/api/users/@me/guilds/{GUILD_ID}/member'
     
@@ -153,6 +180,17 @@ def check_if_discord_guild_member(token):
     else :
         print ("No Guild JSON data received or returned an error.")
 
+# Gets user roles for guild
+def get_user_guild_roles(data):
+    role_ids = data.get('roles', {})
+    return role_ids
+
+def get_role_name_by_id (role_id, guild_roles):
+    for role in guild_roles:
+        if role['id'] == role_id:
+            return role['name']
+    return None
+
 def get_request_discord_api_json(endpoint, headers):
 
     response = requests.get(endpoint, headers=headers)
@@ -162,4 +200,5 @@ def get_request_discord_api_json(endpoint, headers):
         return response.json()
     else: 
         print('ERROR: ', response.status_code, response.text)
+
         
