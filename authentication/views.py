@@ -54,7 +54,8 @@ class UserRegisterModalView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['register_form'] = self.form_class(data=self.request.POST)
+        if 'register_form' not in context:
+            context['register_form'] = self.form_class()
         return context
     
     def form_valid(self, form):
@@ -62,13 +63,13 @@ class UserRegisterModalView(FormView):
         return HttpResponseRedirect(self.get_success_url())
     
     def form_invalid(self, form):
-        print("Form is invalid PYTHON")
-        print(form.errors)
+        print("Form Data: ", self.request.POST)
+        print("Form errors: ", form.errors)
         return self.render_to_response(self.get_context_data(register_form=form))
 
     def get_success_url(self):
-        print("success!")
         return reverse('authentication:index') + '?modal=success'
+
     
 def discord_register(request):
     return redirect(REGISTER_AUTH_REDIRECT_URI)

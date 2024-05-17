@@ -18,6 +18,7 @@ $(document).ready(function() {
     form.addEventListener('submit', function(event) {
         if (!form.checkValidity()) {
             event.preventDefault(); // Prevent form sumbission if it's invalid. 
+            console.log("Form submission prevented due to invalidity")
         }
     });
 });
