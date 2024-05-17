@@ -4,3 +4,6 @@ venv/
 /pycache/*
 *.pyc
 *.pyo
+/node_modules/
+package-lock.json
+package.json

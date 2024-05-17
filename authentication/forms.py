@@ -18,47 +18,58 @@ class LoginModalForm(forms.Form):
 class UserRegisterModalForm(forms.ModelForm): 
     password1 = forms.CharField(
         label='Password', 
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter a valid password'})
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control', 
+            'placeholder': 'Enter a valid password',
+            'required' : True,
+            'pattern' : '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}', # Basic pattern for password validation
+            'title' : 'Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters!'
+            }) 
     )
     password2 = forms.CharField(
         label='Confirm Password', 
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm Password'})
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control', 
+            'placeholder': 'Confirm Password',
+            'required' : True
+            })
     )
 
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2')
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a valid username'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter a valid email address'}),
+            'username': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'placeholder': 'Enter a valid username',
+                'required' : True,
+                }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control', 
+                'placeholder': 'Enter a valid email address',
+                'required' : True,
+                'type' : 'email'
+                }),
         }
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
+        print("Cleaning email!")
 
         if User.objects.filter(email=email).exists():
             raise ValidationError("This email is already in use.")
-        
         return email
     
-    def clean_password1(self):
-        password1 = self.cleaned_data.get('password1')
-
-        try:
-            validate_password(password1)
-        except ValidationError as e:
-            raise ValidationError(e.messages)
-
-        return password1
-    
-    def clean_password2(self):
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
+    def clean(self):
+        print("Cleaning passwords!")
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
 
         if password1 and password2 and password1 != password2:
-            raise ValidationError("Passwords do not match.")
+            self.add_error('password2', 'Passwords do not match.')
 
-        return password2
+        return cleaned_data
     
     def save(self, commit=True):
         user = super().save(commit=False)

@@ -5,12 +5,19 @@ $(document).ready(function() {
     const submitButton = document.getElementById('register-submit-btn');
 
     form.addEventListener('input', function() {
+        console.log("Form input detected");
         if (form.checkValidity()) {
-            console.log(form.checkValidity())
+            console.log("Form is valid");
             submitButton.disabled = false;
-
         } else {
+            console.log("Form is invalid");
             submitButton.disabled = true;
         }
     }); 
+
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault(); // Prevent form sumbission if it's invalid. 
+        }
+    });
 });

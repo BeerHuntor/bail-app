@@ -48,22 +48,24 @@ def login_modal (request):
         form = LoginModalForm()
     return render(request, 'authentication/login_form.html', {'form': form })
 
-class UserRegisterModalView (FormView):
-    template_name = 'authetication/index.html'
+class UserRegisterModalView(FormView):
+    template_name = 'authentication/index.html'
     form_class = UserRegisterModalForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_form'] = self.form_class()
+        context['register_form'] = self.form_class(data=self.request.POST)
         return context
     
     def form_valid(self, form):
         user = form.save()
         return HttpResponseRedirect(self.get_success_url())
     
-    def get_template_names(self):
-        return 'authentication/index.html'
-    
+    def form_invalid(self, form):
+        print("Form is invalid PYTHON")
+        print(form.errors)
+        return self.render_to_response(self.get_context_data(register_form=form))
+
     def get_success_url(self):
         print("success!")
         return reverse('authentication:index') + '?modal=success'
