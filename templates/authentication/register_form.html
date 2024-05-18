@@ -9,38 +9,38 @@
         </div>
         <div class="col-6">
             <div class="mb-3">
-                {{ register_form.username.label_tag }}
-                {{ register_form.username }}
+                {{register_form.username.label_tag}}
+                {{register_form.username}}
                 <div class="text-danger">
                     {% for error in register_form.username.errors %}
-                        <span>{{ error }}</span>
+                        <span>{{error}}</span>
                     {% endfor %}
                 </div>
             </div>
             <div class="mb-3">
-                {{ register_form.email.label_tag }}
-                {{ register_form.email }}
+                {{register_form.email.label_tag}}
+                {{register_form.email}}
                 <div class="text-danger">
                     {% for error in register_form.email.errors %}
-                        <span>{{ error }}</span>
+                        <span>{{error}}</span>
                     {% endfor %}
                 </div>
             </div>
             <div class="mb-3">
-                {{ register_form.password1.label_tag }}
-                {{ register_form.password1 }}
+                {{register_form.password1.label_tag}}
+                {{register_form.password1}}
                 <div class="text-danger">
                     {% for error in register_form.password1.errors %}
-                        <span>{{ error }}</span>
+                        <span>{{error}}</span>
                     {% endfor %}
                 </div>
             </div>
             <div class="mb-3">
-                {{ register_form.password2.label_tag }}
-                {{ register_form.password2 }}
+                {{register_form.password2.label_tag}}
+                {{register_form.password2}}
                 <div class="text-danger">
                     {% for error in register_form.password2.errors %}
-                        <span>{{ error }}</span>
+                        <span>{{error}}</span>
                     {% endfor %}
                 </div>
                 <p class="form-info">Password Requirements: 8 characters minimum, must contain one numeric (0-9), one Uppercase (A-Z) and one lowercase (a-z)</p>
