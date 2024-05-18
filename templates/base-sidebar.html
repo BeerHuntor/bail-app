@@ -149,27 +149,25 @@
               </div>
             </div>
         </div>
-
-        <!--REGISTER MODAL-->
-        <div class="modal fade" id="reg-modal" data-bs-backdrop="static" data-bs-keybaord="false" tableindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <!-- Registration Modal -->
+        <div class="modal fade" id="reg-modal" tabindex="-1" role="dialog" aria-labelledby="regModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header justify-content-center">
-                        <h5 class="modal-title fs-5">Register Below</h5>
+                        <h1 class="modal-title fs-5 text-center" id="staticBackdropLabel">Regsiter</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{% url 'authentication:register' %}" method="post" id='register-form' novalidate>
-                        {% csrf_token %}
-                        <div class="modal-body">
+                      </div>
+                    <div class="modal-body">
+                        <form id="register-form" method="post">
+                            {% csrf_token %}
                             {% include 'authentication/register_form.html' %}
-                        </div>
-                        <div class="modal-footer">
-                            
-                        </div>
-                    </form>
+                            <input type="submit" class="btn btn-primary form-control" id="register-submit-btn" value="Register" disabled>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+
 
         <!--REGISTER SUCESS MODAL-->
         <div class="modal fade" id="reg_modal_success" data-bs-backdrop="static" data-bs-keybaord="false" tableindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
