@@ -69,13 +69,12 @@ def discord_register_callback(request):
             access_token = token_data['access_token']
             token_expiry_time = calculate_token_expiry(token_data['expires_in'])
             refresh_token = token_data['refresh_token']
-            
             # Request discord API for user object
             user_data = get_user_data_from_discord(token=access_token)
             user_data['access_token'] = access_token
             user_data['token_expiry'] = token_expiry_time
             user_data['refresh_token'] = refresh_token
-            user_data['is_police'] = is_police(user_data=user_data)
+            #user_data['is_police'] = is_police(user_data=user_data)
         else:
             print("No access token found.")
     else:

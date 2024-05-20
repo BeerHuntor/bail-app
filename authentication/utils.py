@@ -5,6 +5,7 @@ from django.core.files.base import ContentFile
 from datetime import datetime, timedelta
 
 from django.conf import settings
+from urllib.parse import urljoin
 
 class CustomErrorResponse:
     def __init__(self, success, data=None, error_message=None):
@@ -14,8 +15,10 @@ class CustomErrorResponse:
 
 # Discord API Function
 def get_request_discord_api_json(endpoint, headers):
-    discord_api_url = 'https://discord.app.com/api'
-    response = requests.get(f'{discord_api_url}{endpoint}', headers=headers)
+    discord_api_url = 'https://discordapp.com/api'
+    full_url = urljoin(discord_api_url, endpoint)
+    
+    response = requests.get(full_url, headers=headers)
 
     if response.status_code == 200:
         # We have a response
@@ -69,7 +72,7 @@ def get_discord_app_details():
 """
 # Exchanges code for access_token, refresh_token and token expiry
 def exchange_code_for_token_data(code, redirect_uri):
-    token_endpoint = f'{DISCORD_API_URL}/oauth2/token'
+    token_endpoint = 'https://discordapp.com/api/oauth2/token'
     
     if code: 
         discord_details = get_discord_app_details()
@@ -84,6 +87,8 @@ def exchange_code_for_token_data(code, redirect_uri):
         }
 
         response = requests.post(token_endpoint, data=payload)
+
+        print("Raw response text:", response.text)
 
         if response.status_code == 200:
             # Process the response data
