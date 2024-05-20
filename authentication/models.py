@@ -39,14 +39,17 @@ class RegisteredUser(AbstractBaseUser, PermissionsMixin):
         verbose_name='user permissions'
     )
 
-    def save(self,*args, **kwargs):
-        if not self.token_expiry.tzinfo:
-          # Make the token_expiry datetime aware using the current timezone
+    def save(self, *args, **kwargs):
+        if self.token_expiry is not None and not self.token_expiry.tzinfo:
             self.token_expiry = timezone.make_aware(self.token_expiry, timezone.get_current_timezone())
-        if not self.last_login.tzinfo:
-            self.last_login = timezone.make_aware(self.last_login, timezone.get_current_timezone())
-        if not self.date_registered.tzinfo:
-            self.date_registered = timezone.make_aware(self.date_registered, timezone.get_current_timezone())
+        if self.last_login is None or not self.last_login.tzinfo:
+            self.last_login = timezone.now()
+        if self.date_registered is None or not self.date_registered.tzinfo:
+            self.date_registered = timezone.now()
+
+        print(f"token_expiry: {self.token_expiry}, type: {type(self.token_expiry)}")
+        print(f"last_login: {self.last_login}, type: {type(self.last_login)}")
+        print(f"date_registered: {self.date_registered}, type: {type(self.date_registered)}")
         super().save(*args, **kwargs)
 
     def __str__(self):

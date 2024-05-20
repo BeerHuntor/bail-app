@@ -1,4 +1,5 @@
 import requests
+import os
 from io import BytesIO
 from PIL import Image
 from django.core.files.base import ContentFile
@@ -6,6 +7,8 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from urllib.parse import urljoin
+
+from authentication.roles_config import ROLE_ID_TO_NAME
 
 class CustomErrorResponse:
     def __init__(self, success, data=None, error_message=None):
@@ -15,14 +18,26 @@ class CustomErrorResponse:
 
 # Discord API Function
 def get_request_discord_api_json(endpoint, headers):
-    discord_api_url = 'https://discordapp.com/api'
-    full_url = urljoin(discord_api_url, endpoint)
-    
+    discord_api_url = 'https://discordapp.com/api/'
+
+    """
+    with how urljoin works. It doesn't just concatenate strings; it considers the provided endpoint as an absolute URL if it starts with a slash (/),
+    overriding the base URL. To ensure correct URL construction, you should handle the concatenation manually when the endpoint starts with a slash.
+    """
+    if endpoint.startswith('/'):
+        full_url = discord_api_url + endpoint
+    else: 
+        full_url = urljoin(discord_api_url, endpoint)
+
     response = requests.get(full_url, headers=headers)
 
     if response.status_code == 200:
-        # We have a response
-        return response.json()
+        try:
+            # We have a response
+            return response.json()
+        except ValueError as e:
+            error_message = f'JSON decode error: {str(e)}. Raw response: {response.text}'
+            return CustomErrorResponse(success=False, error_message=error_message)
     else: 
         error_message = f'Error: {response.status_code}, {response.text}'
         return CustomErrorResponse(success=False, error_message=error_message)
@@ -88,8 +103,6 @@ def exchange_code_for_token_data(code, redirect_uri):
 
         response = requests.post(token_endpoint, data=payload)
 
-        print("Raw response text:", response.text)
-
         if response.status_code == 200:
             # Process the response data
             response_data = response.json()
@@ -98,7 +111,6 @@ def exchange_code_for_token_data(code, redirect_uri):
                 'expires_in' : response_data.get('expires_in', ''), 
                 'refresh_token' : response_data.get('refresh_token', ''),
             }
-            print(token_data)
             
             return token_data
 
@@ -113,7 +125,7 @@ def exchange_code_for_token_data(code, redirect_uri):
 # Gets discord account information as user data - top level
 def get_user_data_from_discord(token):
     # User Data End Point URI
-    user_data_endpoint = '/users/@me'
+    user_data_endpoint = 'users/@me'
 
     headers = { 
         'Authorization' : f'Bearer {token}'
@@ -128,9 +140,9 @@ def get_user_data_from_discord(token):
 
 # Gets user object from PD discord guild. 
 def get_user_guild(token):
-    guild_id = '1230652347278032936'
+    guild_id = 1230652347278032936
     # Guild Information
-    guild_member_endpoint = '/users/@me/guilds/{guild_id}/member'
+    guild_member_endpoint = f'/users/@me/guilds/{guild_id}/member'
     
     headers = {
         'Authorization' : f'Bearer {token}'
@@ -144,8 +156,18 @@ def get_user_guild(token):
         error_message = "User guild JSON could not be retrieved."
         return CustomErrorResponse(success=False, error_message=error_message)
  
-def get_guild_roles(guild_id, bot_token):
-    pass
+def get_guild_roles(guild_id):
+    guild_roles_endpoint = f'/guilds/{guild_id}/roles'
+    bot_token = os.getenv('DISCORDBOT_TOKEN')
+
+    headers = {
+        'Authorization' : f'Bot {bot_token}'
+    }
+
+    roles_data = get_request_discord_api_json(guild_roles_endpoint, headers=headers)
+    return roles_data if not isinstance(roles_data, CustomErrorResponse) else roles_data
+
+
 
 # NOT USED - USED FOR DEBUG
 def get_all_users_guilds(token):
@@ -173,17 +195,42 @@ def get_all_users_guilds(token):
 """
 # Check if is police in the correct discord
 def is_police(user_data):
-    ROLE_ID = 1230652347307393087 # NEERP Police Role
+    role_id = get_dictionary_key_from_value(ROLE_ID_TO_NAME, 'NEERP Police') # NEERP Police Role
 
-    guild_data = get_user_guild(user_data['access_token'])
-    if guild_data:
-        #They are a member of PD discord
-        guild_roles = get_user_guild_roles(guild_data)
-        get_role_name_by_id(ROLE_ID, guild_roles=guild_roles)
+    guild_user_data = get_user_guild(user_data['access_token'])
+    
+    if isinstance(guild_user_data, CustomErrorResponse):
+        print(f'Error retrieving guild data: {guild_user_data.error_message}, {guild_user_data.error_message.text}')
+        return False
+    
+    user_guild_roles = get_user_guild_roles(guild_user_data)
+
+    if isinstance(user_guild_roles, CustomErrorResponse):
+        print(f'Error retrieving user guild roles: {user_guild_roles.error_message}, {user_guild_roles.error_message.text}')
+        return False
+    
+    for role in user_guild_roles:
+        if role == role_id:
+            return True
+        
+    return False
+
+
+def get_role_name_by_id(role_id, guild_roles):
+    for role in guild_roles:
+        if role['id'] == str(role_id):
+            return role['name']
+    return None
 
 # Gets user roles for guild
 def get_user_guild_roles(user_data):
-    role_ids = user_data.get('roles', {})
+
+    if isinstance(user_data, CustomErrorResponse):
+        # Handle the error case
+        print(f'Error retrieving roles: {user_data.error_message}')
+        return[]
+    
+    role_ids = user_data.get('roles', [])
     return role_ids
 
 # checks the database for the registered user if it exists, and returns none if doesn't
@@ -193,11 +240,11 @@ def get_registereduser_if_exist(user):
         return RegisteredUser.objects.get(user=user)
     except RegisteredUser.DoesNotExist:
         return None
-    
-def get_role_name_by_id (role_id, guild_roles):
-    for role in guild_roles:
-        if role['id'] == str(role_id):
-            print(role['name'])
+
+def get_dictionary_key_from_value(dict, value):
+    for key, val in dict.items():
+        if val == value:
+            return key
     return None
 """
 # endregion

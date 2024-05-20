@@ -3,8 +3,9 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import authenticate, login
 from authentication.forms import LoginModalForm, UserRegisterModalForm
-from authentication.utils import calculate_token_expiry, exchange_code_for_token_data, get_user_data_from_discord, is_police
+from authentication.utils import calculate_token_expiry, exchange_code_for_token_data, get_user_data_from_discord, is_police, CustomErrorResponse
 
+from datetime import datetime
 import requests
 
 
@@ -71,16 +72,24 @@ def discord_register_callback(request):
             refresh_token = token_data['refresh_token']
             # Request discord API for user object
             user_data = get_user_data_from_discord(token=access_token)
+            
+            # Checks and handles case where the user_data is returned as as CustomErrorResponse object. 
+            if isinstance(user_data, CustomErrorResponse):
+                return JsonResponse({'msg' : user_data.error_message}, status=400)
+            
             user_data['access_token'] = access_token
             user_data['token_expiry'] = token_expiry_time
             user_data['refresh_token'] = refresh_token
-            #user_data['is_police'] = is_police(user_data=user_data)
+            user_data['is_police'] = is_police(user_data=user_data)
+
+            authenticate(request=request, user=user_data)
+            
         else:
             print("No access token found.")
     else:
         print("No code found.")        
     
-    return JsonResponse ({'msg' : 'Discord Registration'})
+    return render(request,'authentication/index.html')
 
 """
 # endregion

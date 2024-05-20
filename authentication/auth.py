@@ -8,12 +8,15 @@ class RegisteredUserAuthenticationBackend(BaseBackend):
             return None
 
         try: 
-            user_instance = RegisteredUser.objects.get(discord_user_id=user['id'])
-            return user_instance
+            existing_user = RegisteredUser.objects.get(discord_user_id=user['id'])
+            return existing_user
         except RegisteredUser.DoesNotExist:
             print("User was not found... Saving!")
 
             # Create a new user
+            new_user = RegisteredUser.objects.create_user(user)
+            print(new_user)
+            return new_user
             
         return None
 
