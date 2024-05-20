@@ -3,7 +3,6 @@ from authentication.models import RegisteredUser
 
 class RegisteredUserAuthenticationBackend(BaseBackend):
     def authenticate (self, request, user) -> RegisteredUser:
-        print("authenticate()")
 
         if user is None:
             return None
