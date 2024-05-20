@@ -22,7 +22,7 @@ class UserRegisterModalForm(forms.ModelForm):
             'class': 'form-control', 
             'placeholder': 'Enter a valid password',
             'required' : True,
-            'pattern' : '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}', # Basic pattern for password validation
+            'pattern' : '(?=.*[a-z])(?=.*[A-Z]).{8,}', # Basic pattern for password validation
             'title' : 'Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters!',
             'type' : 'password'
             }) 
@@ -56,9 +56,12 @@ class UserRegisterModalForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
+        does_exist = User.objects.filter(email=email)
+        if len(does_exist) != 0:
             print("exist")
             raise ValidationError("Email Already in use, please use another email. ")
+        else:
+            print("email doesn't exist")
         return email
     
     def clean(self):

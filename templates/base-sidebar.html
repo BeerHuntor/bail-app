@@ -20,7 +20,7 @@
     
 </head>
 <body>
-    {% if user.is_authenticated %}
+    {% if user_profile.is_authenticated %}
         <div class="container-fluid">
             <div class="row">
                 <!--SIDEBAR NAVIGATION-->
@@ -75,12 +75,6 @@
                                 <a href="#" class="nav-link text-white fs-5">Profile</a>
                                 <hr class="nav-item-divider">
                             </li>
-                            {% if not request.user.userdiscordaccountinformation %}              
-                                <li class="nav-item">
-                                    <a href="{% url 'authentication:discord_link' %}" class="nav-link text-white fs-5">Link Discord</a>
-                                    <hr class="nav-item-divider">
-                                </li>
-                            {% endif %} 
                         </ul>
                     </div>
                 </div>
@@ -89,7 +83,7 @@
                     {% block content %}
                     
                     {% endblock content %}
-                    {{ user_profile }}
+                    {{user_profile}}
                     <!--FOOTER-->
                     <div class="row align-self-end footer">
                         <span class="fs-6 d-inline text-center p-5">Unique RP 2024 | Created by BeerHuntor</span>
@@ -116,11 +110,13 @@
                         <a href="" class="nav-link">Dashboard</a>
                     </li>
                     <li class="nav-item">
+                        <!--DISCORD LOGIN-->
                         <a href="#" class="nav-link">
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#login-modal" type="button">Login</button>
                         </a>
                     </li>
                     <li class="nav-item">
+                        <!--DISCORD REGISTRATION-->
                         <a href="#" class="nav-link">
                             <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reg-modal" type="button">Register</button>
                         </a>
@@ -129,7 +125,7 @@
             </div>
         </nav>
         <!--LOGIN MODAL-->
-        <div class="modal fade" id="login-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        {% comment %} <div class="modal fade" id="login-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
               <div class="modal-content">
                 <div class="modal-header justify-content-center">
@@ -148,21 +144,22 @@
                 </form>
               </div>
             </div>
-        </div>
+        </div> {% endcomment %}
         <!-- Registration Modal -->
         <div class="modal fade" id="reg-modal" tabindex="-1" role="dialog" aria-labelledby="regModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header justify-content-center">
                         <h1 class="modal-title fs-5 text-center" id="staticBackdropLabel">Regsiter</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                     <div class="modal-body">
-                        <form id="register-form" method="post">
-                            {% csrf_token %}
-                            {% include 'authentication/register_form.html' %}
-                            <input type="submit" class="btn btn-primary form-control" id="register-submit-btn" value="Register" disabled>
-                        </form>
+                        <div class="container">
+                            <p>You are about to be redirected to Discord, and register using a third party software. If you are sure you want to do this, continue by clicking the button below.</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center d-flex">
+                        <a href="{% url 'authentication:discord_register' %}"><input type="submit" class="btn btn-primary" value="Continue To Discord."></a>
                     </div>
                 </div>
             </div>
@@ -170,7 +167,7 @@
 
 
         <!--REGISTER SUCESS MODAL-->
-        <div class="modal fade" id="reg_modal_success" data-bs-backdrop="static" data-bs-keybaord="false" tableindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        {% comment %} <div class="modal fade" id="reg_modal_success" data-bs-backdrop="static" data-bs-keybaord="false" tableindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header justify-content-center">
@@ -183,7 +180,7 @@
                         </div>
                 </div>
             </div>
-        </div>
+        </div> {% endcomment %}
         {% block logged_out_content %}
         {% endblock logged_out_content %}
         <div class="row align-self-end footer">

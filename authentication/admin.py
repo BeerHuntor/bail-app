@@ -25,4 +25,5 @@ class UserAdmin(BaseUserAdmin):
 
     search_fields = ('username', 'email', 'discord_user_id')
     ordering = ('username',)
+
 admin.site.register(RegisteredUser)
