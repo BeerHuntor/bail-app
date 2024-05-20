@@ -1,20 +1,26 @@
 from django.contrib.auth.models import BaseUserManager
-
+from authentication.utils import get_discord_profile_pic
 class RegisteredUserManager(BaseUserManager):
-    def create_user(self, email, username, discord_id, password=None):
-        if not email:
-            raise ValueError("The email field must be set")
-        if not username:
-            raise ValueError("The username field must be set")
-        if not discord_id:
-            raise ValueError("The discord id field must be set")
+    def create_user(self, user):
+
+        profile_picture = self.get_discord_profile_pic(user['id'], user['avatar'])
         
-        email = self.normalize_email(email)
-        user = self.model(email=email, username=username, discord_id=discord_id)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-    
+        new_user = self.model(
+            discord_user_id = user['id'],
+            username = user['username'],
+            email = user['email'],
+            access_token = ['access_token'],
+            refresh_token = ['refresh_token'],
+            token_expiry = ['token_expiry'],
+            is_police = ['is_police']        
+        )
+
+        if profile_picture:
+            new_user.profile_picture.save(f'{user['id']}_{user['avatar']}.png', profile_picture)
+
+        new_user.save(using=self._db)
+
+
     def create_super_user(self, email, username, discord_id, password=None):
         user = self.create_user(email, username, discord_id, password=None)
         user.is_staff = True
