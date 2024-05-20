@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+#Load Environment Variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8#^+cxx+ckk6(+_-f7r)4r@j1=4t2xx$z*awlar_5x7ts3na0w'
+SECRET_KEY = os.getenv('PROJECT_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -125,10 +129,10 @@ AUTHENTICATION_BACKENDS = [
 SOCIALACCOUNT_PROVIDERS = {
     'discord' : {
         'APP' : {
-            'client_id' : '1228365653254209606',
-            'secret' : 'SOC-wPZgwX1GjaGgQecwc1ZF8ENMn453',
+            'client_id' : os.getenv('DISCORD_APP_CLIENT_ID'),
+            'secret' : os.getenv('DISCORD_APP_SECRET'),
             'key' : '', 
-            'scope' : 'identify guilds',
+            'scope' : 'identify guilds email',
         },
     }
 }
