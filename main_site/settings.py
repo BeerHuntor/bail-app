@@ -28,10 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTHENTICATION_BACKENDS = [
-    'authentication.auth.RegisteredUserAuthenticationBackend',
-]
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -117,9 +113,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTHENTICATION_BACKENDS = [
     #Needed to login by username in Django admin, regardles of 'allauth'
-    'django.contrib.auth.backends.ModelBackend',
+    #'django.contrib.auth.backends.ModelBackend',
+
     # 'allauth' specific authentication methods, such as login by email.
     'allauth.account.auth_backends.AuthenticationBackend',
+    # custom authentication backend for discord.
+    'authentication.auth.RegisteredUserAuthenticationBackend',
 ]
 
 # Django-allauth social account specific settings

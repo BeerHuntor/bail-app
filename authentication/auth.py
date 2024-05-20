@@ -1,6 +1,5 @@
 from django.contrib.auth.backends import BaseBackend
 from authentication.models import RegisteredUser
-from django.contrib.auth.models import User
 
 class RegisteredUserAuthenticationBackend(BaseBackend):
     def authenticate (self, request, user) -> RegisteredUser:
