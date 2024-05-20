@@ -15,10 +15,12 @@ GUILD_ID = '1230652347278032936'
 TEST_GUILD_ID = '891382242729939014' # Returns code 10004 when not a member and null json. 
 TOKEN_ENDPOINT = 'https://discordapp.com/api/oauth2/token'
 
-REGISTER_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Fregister%2Fcallback&scope=identify+connections+guilds.members.read+email'
-LOGIN_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Flogin%2Fcallback&scope=identify+connections+guilds.members.read+guilds'
+REGISTER_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fregister%2Fcallback&scope=identify+connections+guilds.members.read+guilds+email'
+LOGIN_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Flogin%2Fcallback&scope=identify+connections+guilds.members.read+guilds+email'
 # Create your views here.
-
+"""
+# region Views
+"""
 def index_view (request): 
     form = LoginModalForm()
     register_form = UserRegisterModalForm()
@@ -72,16 +74,25 @@ def login_modal (request):
 def discord_login(request):
     return redirect(LOGIN_AUTH_REDIRECT_URI)
 
-#User gets redirected to this view on discord auth
+#This is where the user is redirected after a successful auth. 
 def discord_login_callback(request):
-    pass
-    
+    return JsonResponse ({'msg' : 'Discord Login'})
+
+# User gets directed to the discord auth page then gets taken to the callback    
 def discord_register(request):
     return redirect(REGISTER_AUTH_REDIRECT_URI)
 
 #This is where the user is redirected after a successful auth. 
 def discord_register_callback(request):
-    pass
+    return JsonResponse ({'msg' : 'Discord Registration'})
+
+"""
+# endregion
+"""
+
+"""
+# region discord API Calls
+"""
 
 def exchange_code_for_access_token(code, redirect_uri):
     
@@ -116,22 +127,6 @@ def exchange_code_for_access_token(code, redirect_uri):
     else:
         return HttpResponse("There was an error: Please contact the website developer stating code: <strong>DC012</strong>")
 
-# Gets details of the discord app
-def get_discord_app_details():
-    socialaccount_providers = settings.SOCIALACCOUNT_PROVIDERS
-
-    discord_provider_settings = socialaccount_providers.get('discord', {})
-
-    discord_client_id = discord_provider_settings.get('APP', {}).get('client_id', '')
-    discord_secret = discord_provider_settings.get('APP', {}).get('secret', '')
-    discord_scope = discord_provider_settings.get('APP', {}).get('scope', [])
-
-    return {
-        'client_id' : discord_client_id,
-        'secret' : discord_secret,
-        'scope' : discord_scope
-    }
-
 # Gets discord user data - top level
 def get_user_data_from_discord(token):
     # User Data End Point URI
@@ -146,22 +141,6 @@ def get_user_data_from_discord(token):
         return request_data
     else:
         print("No User JSON object recieved or returned an error.")
-
-# NOT USED - USED FOR DEBUG
-def get_user_guilds_info(token):
-    #  Guilds endpoint
-    guild_endpoint = 'https://discord.com/api/users/@me/guilds'
-
-    headers = {
-        'Authorization' : f'Bearer {token}'
-    }
-
-    request_data = get_request_discord_api_json(guild_endpoint, headers)
-
-    if request_data:
-        return request_data
-    else: 
-        print('No Guilds JSON object recieved or returned an error.')
 
 # Gets user object from PD discord guild. 
 def get_user_guild(token):
@@ -178,29 +157,53 @@ def get_user_guild(token):
         return request_data
     else :
         print ("No Guild JSON data received or returned an error.")
+ 
+# NOT USED - USED FOR DEBUG
+def get_all_users_guilds(token):
+    #  Guilds endpoint
+    guild_endpoint = 'https://discord.com/api/users/@me/guilds'
 
+    headers = {
+        'Authorization' : f'Bearer {token}'
+    }
+
+    request_data = get_request_discord_api_json(guild_endpoint, headers)
+
+    if request_data:
+        return request_data
+    else: 
+        print('No Guilds JSON object recieved or returned an error.')
+
+"""
+# endregion
+"""
 # Gets user roles for guild
 def get_user_guild_roles(data):
     role_ids = data.get('roles', {})
     return role_ids
 
-#Creates a discord user model based on account information. 
-def link_discord_account(user, discord_user_id, access_token, refresh_token, token_expiry):
-    user_discord_account_information = RegisteredUser.objects.create(
-        user=user,
-        discord_user_id = discord_user_id,
-        access_token = access_token,
-        refresh_token = refresh_token,
-        token_expiry = token_expiry,
-    )
-
-    return user_discord_account_information
-
-def get_user_discord_account_information(user):
+# checks the database for the registered user if it exists, and returns none if doesn't
+def get_registereduser_if_exist(user):
     try:
         return RegisteredUser.objects.get(user=user)
     except RegisteredUser.DoesNotExist:
         return None
+    
+# Gets details of the discord app
+def get_discord_app_details():
+    socialaccount_providers = settings.SOCIALACCOUNT_PROVIDERS
+
+    discord_provider_settings = socialaccount_providers.get('discord', {})
+
+    discord_client_id = discord_provider_settings.get('APP', {}).get('client_id', '')
+    discord_secret = discord_provider_settings.get('APP', {}).get('secret', '')
+    discord_scope = discord_provider_settings.get('APP', {}).get('scope', [])
+
+    return {
+        'client_id' : discord_client_id,
+        'secret' : discord_secret,
+        'scope' : discord_scope
+    }
 
 def get_role_name_by_id (role_id, guild_roles):
     for role in guild_roles:
