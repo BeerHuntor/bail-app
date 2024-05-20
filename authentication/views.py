@@ -84,6 +84,27 @@ def discord_register(request):
 
 #This is where the user is redirected after a successful auth. 
 def discord_register_callback(request):
+    redirect_uri = request.build_absolute_uri('/register/callback') # This is the redirect url where we are redirected to upon authentication including the ?code
+    code = request.GET.get('code')
+
+    if code:
+        # Exchange for access_token
+        token_data = exchange_code_for_token_data(code=code, redirect_uri=redirect_uri)
+        if token_data: 
+            access_token = token_data['access_token']
+            token_expiry_time = calculate_token_expiry(token_data['expires_in'])
+            refresh_token = token_data['refresh_token']
+            # Request discord API for user object
+            user_data = get_user_data_from_discord(token=access_token)
+            user_data['access_token'] = access_token
+            user_data['token_expiry'] = token_expiry_time
+            user_data['refresh_token'] = refresh_token
+            print(user_data)
+        else:
+            print("No access token found.")
+    else:
+        print("No code found.")        
+    
     return JsonResponse ({'msg' : 'Discord Registration'})
 
 """
@@ -94,7 +115,7 @@ def discord_register_callback(request):
 # region discord API Calls
 """
 
-def exchange_code_for_access_token(code, redirect_uri):
+def exchange_code_for_token_data(code, redirect_uri):
     
     if code: 
         discord_details = get_discord_app_details()
@@ -109,16 +130,18 @@ def exchange_code_for_access_token(code, redirect_uri):
         }
 
         response = requests.post(TOKEN_ENDPOINT, data=payload)
-        print(response)
 
         if response.status_code == 200:
             # Process the response data
             response_data = response.json()
-
-            access_token = response_data.get('access_token', '')
-            print(access_token)
+            token_data = {
+                'access_token' : response_data.get('access_token', ''), 
+                'expires_in' : response_data.get('expires_in', ''), 
+                'refresh_token' : response_data.get('refresh_token', ''),
+            }
+            print(token_data)
             
-            return access_token
+            return token_data
             #print(get_user_discord_account_information(request.user))
 
         else:
