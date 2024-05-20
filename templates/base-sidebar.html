@@ -125,26 +125,23 @@
             </div>
         </nav>
         <!--LOGIN MODAL-->
-        {% comment %} <div class="modal fade" id="login-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="login-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
               <div class="modal-content">
                 <div class="modal-header justify-content-center">
                   <h1 class="modal-title fs-5 text-center" id="staticBackdropLabel">Login</h1>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{% url 'authentication:login' %}" method="post">
-                    {% csrf_token %}
                     <div class="modal-body">
-                        {% include 'authentication/login_form.html' %}
+                        <P>You are about to login via third-party login. Continue to continue</P>
                     </div>
                     <div class="modal-footer d-flex justify-content-center">
-                        <button type="submit" class="btn btn-secondary btn-secondary-modal" data-bs-dismiss="modal">Login</button>
-                        <button type="button" class="btn btn-primary">Close</button>                
+                        <a href="{% url 'authentication:login' %}"><input type="submit" class="btn btn-primary" value="Login with discord."></a>             
                     </div>
                 </form>
               </div>
             </div>
-        </div> {% endcomment %}
+        </div>
         <!-- Registration Modal -->
         <div class="modal fade" id="reg-modal" tabindex="-1" role="dialog" aria-labelledby="regModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -159,7 +156,7 @@
                         </div>
                     </div>
                     <div class="modal-footer justify-content-center d-flex">
-                        <a href="{% url 'authentication:discord_register' %}"><input type="submit" class="btn btn-primary" value="Continue To Discord."></a>
+                        <a href="{% url 'authentication:register' %}"><input type="submit" class="btn btn-primary" value="Continue To Discord."></a>
                     </div>
                 </div>
             </div>

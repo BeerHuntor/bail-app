@@ -17,7 +17,6 @@ TOKEN_ENDPOINT = 'https://discordapp.com/api/oauth2/token'
 
 REGISTER_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Fregister%2Fcallback&scope=identify+connections+guilds.members.read+email'
 LOGIN_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Flogin%2Fcallback&scope=identify+connections+guilds.members.read+guilds'
-LINK_AUTH_REDIRECT_URI = 'https://discord.com/oauth2/authorize?client_id=1228365653254209606&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Faccounts%2Fdiscord%2Flink%2Fcallback&scope=identify+connections+guilds.members.read+email'
 # Create your views here.
 
 def index_view (request): 
@@ -69,38 +68,20 @@ def login_modal (request):
 #         print("success!")
 #         return reverse('authentication:index') + '?modal=success'
 
+# User gets directed to the discord auth page then gets taken to the callback
+def discord_login(request):
+    return redirect(LOGIN_AUTH_REDIRECT_URI)
+
+#User gets redirected to this view on discord auth
+def discord_login_callback(request):
+    pass
     
 def discord_register(request):
     return redirect(REGISTER_AUTH_REDIRECT_URI)
 
 #This is where the user is redirected after a successful auth. 
 def discord_register_callback(request):
-    code = request.GET.get('code')
-    redirect_uri = request.build_absolute_uri('/accounts/discord/register/callback') # Where we are redirecting to based on dev portal and urls.py
-
-    if code:
-        access_token = exchange_code_for_access_token(code, redirect_uri)
-        if access_token:
-            user = get_user_data_from_discord(access_token)
-            print(user)
-            if user: 
-                #Create a user
-                authenticate(request, user=user)
-            else:
-                print("No user found.")
-
-    else: 
-        print("no code found")
-    return JsonResponse({"user" : user})
-
-def discord_login(request):
-    return redirect(LOGIN_AUTH_REDIRECT_URI)
-
-def discord_login_callback(request):
     pass
-
-def discord_link(request):
-    return redirect(LINK_AUTH_REDIRECT_URI)
 
 def exchange_code_for_access_token(code, redirect_uri):
     
