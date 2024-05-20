@@ -14,7 +14,7 @@ class RegisteredUser(AbstractBaseUser, PermissionsMixin):
     access_token = models.CharField(max_length=255)
     refresh_token = models.CharField(max_length=255)
     token_expiry = models.DateTimeField(auto_now=False, auto_now_add=False)
-    last_login = models.DateTimeField(auto_now=False, auto_now_add=False)
+    last_login = models.DateTimeField(auto_now=True, auto_now_add=False)
     date_registered = models.DateTimeField(auto_now=False, auto_now_add=True)
     profile_picture = models.ImageField(upload_to='media/profile_pics/', height_field=None, width_field=None, max_length=None)
     is_police = models.BooleanField(default=False)
