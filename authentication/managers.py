@@ -9,14 +9,17 @@ class RegisteredUserManager(BaseUserManager):
             discord_user_id = user['id'],
             username = user['username'],
             email = user['email'],
-            access_token = ['access_token'],
-            refresh_token = ['refresh_token'],
-            token_expiry = ['token_expiry'],
-            is_police = ['is_police']        
+            access_token = user['access_token'],
+            refresh_token = user['refresh_token'],
+            token_expiry = user['token_expiry'],
+            is_police = user['is_police']        
         )
 
         if profile_picture:
             new_user.profile_picture.save(f'{user['id']}_{user['avatar']}.png', profile_picture)
+
+        
+        print(f"new_user.token_expiry: {new_user.token_expiry}, type: {type(new_user.token_expiry)}")
 
         new_user.save(using=self._db)
 
