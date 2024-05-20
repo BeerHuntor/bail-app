@@ -9,6 +9,7 @@ class RegisteredUserAuthenticationBackend(BaseBackend):
 
         try: 
             existing_user = RegisteredUser.objects.get(discord_user_id=user['id'])
+            print(f"Existing User: {existing_user}")
             return existing_user
         except RegisteredUser.DoesNotExist:
             print("User was not found... Saving!")
@@ -18,7 +19,7 @@ class RegisteredUserAuthenticationBackend(BaseBackend):
             print(new_user)
             return new_user
             
-        return None
+        
 
     def get_user(self, user_id):
         try:
