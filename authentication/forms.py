@@ -58,14 +58,11 @@ class UserRegisterModalForm(forms.ModelForm):
         email = self.cleaned_data.get('email')
         does_exist = User.objects.filter(email=email)
         if len(does_exist) != 0:
-            print("exist")
             raise ValidationError("Email Already in use, please use another email. ")
         else:
-            print("email doesn't exist")
-        return email
+            return email
     
     def clean(self):
-        print("Cleaning passwords!")
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
