@@ -3,7 +3,7 @@ from authentication.utils import get_discord_profile_pic
 class RegisteredUserManager(BaseUserManager):
     def create_user(self, user):
 
-        profile_picture = self.get_discord_profile_pic(user['id'], user['avatar'])
+        profile_picture = get_discord_profile_pic(user['id'], user['avatar'])
         
         new_user = self.model(
             discord_user_id = user['id'],

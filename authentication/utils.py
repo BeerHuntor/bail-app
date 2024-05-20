@@ -1,9 +1,7 @@
-from authentication.models import RegisteredUser
 import requests
 from io import BytesIO
 from PIL import Image
 from django.core.files.base import ContentFile
-from django.utils import timezone
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -16,8 +14,8 @@ class CustomErrorResponse:
 
 # Discord API Function
 def get_request_discord_api_json(endpoint, headers):
-
-    response = requests.get(endpoint, headers=headers)
+    discord_api_url = 'https://discord.app.com/api'
+    response = requests.get(f'{discord_api_url}{endpoint}', headers=headers)
 
     if response.status_code == 200:
         # We have a response
@@ -69,9 +67,9 @@ def get_discord_app_details():
 """
 # region discord API Calls
 """
-
+# Exchanges code for access_token, refresh_token and token expiry
 def exchange_code_for_token_data(code, redirect_uri):
-    token_endpoint = 'https://discordapp.com/api/oauth2/token'
+    token_endpoint = f'{DISCORD_API_URL}/oauth2/token'
     
     if code: 
         discord_details = get_discord_app_details()
@@ -107,10 +105,10 @@ def exchange_code_for_token_data(code, redirect_uri):
         error_message = "Error: No Code Provided"
         return CustomErrorResponse(success=False, error_message=error_message)
 
-# Gets discord user data - top level
+# Gets discord account information as user data - top level
 def get_user_data_from_discord(token):
     # User Data End Point URI
-    user_data_endpoint = 'https://discord.com/api/users/@me'
+    user_data_endpoint = '/users/@me'
 
     headers = { 
         'Authorization' : f'Bearer {token}'
@@ -125,8 +123,9 @@ def get_user_data_from_discord(token):
 
 # Gets user object from PD discord guild. 
 def get_user_guild(token):
+    guild_id = '1230652347278032936'
     # Guild Information
-    guild_member_endpoint = f'https://discord.com/api/users/@me/guilds/{GUILD_ID}/member'
+    guild_member_endpoint = '/users/@me/guilds/{guild_id}/member'
     
     headers = {
         'Authorization' : f'Bearer {token}'
@@ -140,10 +139,13 @@ def get_user_guild(token):
         error_message = "User guild JSON could not be retrieved."
         return CustomErrorResponse(success=False, error_message=error_message)
  
+def get_guild_roles(guild_id, bot_token):
+    pass
+
 # NOT USED - USED FOR DEBUG
 def get_all_users_guilds(token):
     #  Guilds endpoint
-    guild_endpoint = 'https://discord.com/api/users/@me/guilds'
+    guild_endpoint = '/users/@me/guilds'
 
     headers = {
         'Authorization' : f'Bearer {token}'
@@ -168,10 +170,11 @@ def get_all_users_guilds(token):
 def is_police(user_data):
     ROLE_ID = 1230652347307393087 # NEERP Police Role
 
-    if get_user_guild(user_data['access_token']):
+    guild_data = get_user_guild(user_data['access_token'])
+    if guild_data:
         #They are a member of PD discord
-        guild = get_user_guild(user_data['access_token'])
-        print(guild)
+        guild_roles = get_user_guild_roles(guild_data)
+        get_role_name_by_id(ROLE_ID, guild_roles=guild_roles)
 
 # Gets user roles for guild
 def get_user_guild_roles(user_data):
@@ -180,16 +183,16 @@ def get_user_guild_roles(user_data):
 
 # checks the database for the registered user if it exists, and returns none if doesn't
 def get_registereduser_if_exist(user):
+    from authentication.models import RegisteredUser # Dynamic import to avoid circular import issues
     try:
         return RegisteredUser.objects.get(user=user)
     except RegisteredUser.DoesNotExist:
         return None
     
-
 def get_role_name_by_id (role_id, guild_roles):
     for role in guild_roles:
-        if role['id'] == role_id:
-            return role['name']
+        if role['id'] == str(role_id):
+            print(role['name'])
     return None
 """
 # endregion
