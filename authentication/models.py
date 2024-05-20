@@ -1,10 +1,12 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from authentication.managers import RegisteredUserManager
 
 # Create your models here.
    
 class RegisteredUser(AbstractBaseUser, PermissionsMixin):
+    objects = RegisteredUserManager()
 
     discord_user_id = models.CharField(primary_key=True, max_length=255, unique=True)
     username = models.CharField(max_length=50)

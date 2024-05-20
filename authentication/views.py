@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import authenticate, login
 from authentication.forms import LoginModalForm, UserRegisterModalForm
-from django.views.generic.edit import FormView
-from authentication.models import UserDiscordAccountInformation
+from authentication.models import RegisteredUser
 
 from django.conf import settings
-from allauth.socialaccount.models import SocialAccount
 import requests
 from datetime import timedelta, datetime
 
@@ -48,34 +47,51 @@ def login_modal (request):
         form = LoginModalForm()
     return render(request, 'authentication/login_form.html', {'form': form })
 
-class UserRegisterModalView(FormView):
-    template_name = 'authentication/index.html'
-    form_class = UserRegisterModalForm
+# class UserRegisterModalView(FormView):
+#     template_name = 'authentication/index.html'
+#     form_class = UserRegisterModalForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['register_form'] = self.form_class(data=self.request.POST)
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['register_form'] = self.form_class(data=self.request.POST)
+#         return context
     
-    def form_valid(self, form):
-        user = form.save()
-        return HttpResponseRedirect(self.get_success_url())
+#     def form_valid(self, form):
+#         user = form.save()
+#         return HttpResponseRedirect(self.get_success_url())
     
-    def form_invalid(self, form):
-        print("Form is invalid PYTHON")
-        print(form.errors)
-        return self.render_to_response(self.get_context_data(register_form=form))
+#     def form_invalid(self, form):
+#         print("Form is invalid PYTHON")
+#         print(form.errors)
+#         return self.render_to_response(self.get_context_data(register_form=form))
 
-    def get_success_url(self):
-        print("success!")
-        return reverse('authentication:index') + '?modal=success'
+#     def get_success_url(self):
+#         print("success!")
+#         return reverse('authentication:index') + '?modal=success'
 
     
 def discord_register(request):
     return redirect(REGISTER_AUTH_REDIRECT_URI)
 
+#This is where the user is redirected after a successful auth. 
 def discord_register_callback(request):
-    pass
+    code = request.GET.get('code')
+    redirect_uri = request.build_absolute_uri('/accounts/discord/register/callback') # Where we are redirecting to based on dev portal and urls.py
+
+    if code:
+        access_token = exchange_code_for_access_token(code, redirect_uri)
+        if access_token:
+            user = get_user_data_from_discord(access_token)
+            print(user)
+            if user: 
+                #Create a user
+                authenticate(request, user=user)
+            else:
+                print("No user found.")
+
+    else: 
+        print("no code found")
+    return JsonResponse({"user" : user})
 
 def discord_login(request):
     return redirect(LOGIN_AUTH_REDIRECT_URI)
@@ -86,10 +102,8 @@ def discord_login_callback(request):
 def discord_link(request):
     return redirect(LINK_AUTH_REDIRECT_URI)
 
-def discord_link_callback(request):
-    redirect_uri = request.build_absolute_uri('/accounts/discord/link/callback')
-    code = request.GET.get('code')
-
+def exchange_code_for_access_token(code, redirect_uri):
+    
     if code: 
         discord_details = get_discord_app_details()
         # Request Access Token
@@ -103,24 +117,21 @@ def discord_link_callback(request):
         }
 
         response = requests.post(TOKEN_ENDPOINT, data=payload)
+        print(response)
 
         if response.status_code == 200:
             # Process the response data
             response_data = response.json()
 
             access_token = response_data.get('access_token', '')
-            token_expiry = calculate_token_expiry(response_data.get('expires_in', ''))
-            discord_user_id = get_user_data_from_discord(access_token).get('id', '')
-
-            link_discord_account(request.user, discord_user_id, response_data.get('access_token', ''),  response_data.get('refresh_token', ''), token_expiry)
-
-
+            print(access_token)
+            
+            return access_token
             #print(get_user_discord_account_information(request.user))
 
         else:
             # Request Failed
-            print('Error:', response.status_code, response.text)
-        return redirect(reverse_lazy('authentication:index'))
+            print('Error - No Access Token Found:', response.status_code, response.text)
     else:
         return HttpResponse("There was an error: Please contact the website developer stating code: <strong>DC012</strong>")
 
@@ -171,7 +182,7 @@ def get_user_guilds_info(token):
     else: 
         print('No Guilds JSON object recieved or returned an error.')
 
-# Gets user model from PD discord guild. 
+# Gets user object from PD discord guild. 
 def get_user_guild(token):
     # Guild Information
     guild_member_endpoint = f'https://discord.com/api/users/@me/guilds/{GUILD_ID}/member'
@@ -192,8 +203,9 @@ def get_user_guild_roles(data):
     role_ids = data.get('roles', {})
     return role_ids
 
+#Creates a discord user model based on account information. 
 def link_discord_account(user, discord_user_id, access_token, refresh_token, token_expiry):
-    user_discord_account_information = UserDiscordAccountInformation.objects.create(
+    user_discord_account_information = RegisteredUser.objects.create(
         user=user,
         discord_user_id = discord_user_id,
         access_token = access_token,
@@ -205,8 +217,8 @@ def link_discord_account(user, discord_user_id, access_token, refresh_token, tok
 
 def get_user_discord_account_information(user):
     try:
-        return UserDiscordAccountInformation.objects.get(user=user)
-    except UserDiscordAccountInformation.DoesNotExist:
+        return RegisteredUser.objects.get(user=user)
+    except RegisteredUser.DoesNotExist:
         return None
 
 def get_role_name_by_id (role_id, guild_roles):
