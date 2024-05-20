@@ -3,7 +3,6 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import authenticate, login
 from authentication.forms import LoginModalForm, UserRegisterModalForm
-from authentication.models import RegisteredUser
 from authentication.utils import calculate_token_expiry, exchange_code_for_token_data, get_user_data_from_discord, is_police
 
 import requests
@@ -77,7 +76,6 @@ def discord_register_callback(request):
             user_data['token_expiry'] = token_expiry_time
             user_data['refresh_token'] = refresh_token
             user_data['is_police'] = is_police(user_data=user_data)
-            print(user_data)
         else:
             print("No access token found.")
     else:
