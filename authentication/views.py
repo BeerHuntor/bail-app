@@ -51,6 +51,7 @@ def login_modal (request):
 
 def authenticate_user(request, redirect_uri, register=False):
     code = request.GET.get('code')
+    print(code)
 
     if code:
         # Exchange for token data
@@ -71,12 +72,14 @@ def authenticate_user(request, redirect_uri, register=False):
         if isinstance(user_data, CustomErrorResponse):
             return JsonResponse({'msg' : user_data.error_message}, status=400)
         
+        
         user_data.update({
             'access_token' : access_token,
             'token_expiry' : token_expiry_time,
             'refresh_token' : refresh_token,
-            'is_police' : is_police(user_data=user_data)
+            'is_police' : is_police(access_token=access_token)
         }) 
+        
             
 
         user = authenticate(request, user=user_data)
@@ -95,7 +98,7 @@ def discord_login(request):
 #This is where the user is redirected after a successful auth. 
 def discord_login_callback(request):
     redirect_uri = request.build_absolute_uri('/oauth2/login')
-    authenticate_user(request=request, redirect_uri=redirect_uri)
+    return authenticate_user(request=request, redirect_uri=redirect_uri)
 
 # User gets directed to the discord auth page then gets taken to the callback    
 def discord_register(request):
@@ -104,7 +107,7 @@ def discord_register(request):
 #This is where the user is redirected after a successful auth. 
 def discord_register_callback(request):
     redirect_uri = request.build_absolute_uri('/oauth2/register')
-    authenticate_user(request=request, redirect_uri=redirect_uri)
+    return authenticate_user(request=request, redirect_uri=redirect_uri, register=True)
 
 """
 # endregion
