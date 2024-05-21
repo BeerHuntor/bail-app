@@ -3,6 +3,7 @@ import os
 from io import BytesIO
 from PIL import Image
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -50,20 +51,33 @@ def calculate_token_expiry(expires_in):
 
     return current_time + duration
 
-# Returns discord profile picture
+# Returns discord profile picture from url using disord_id and avatar, and downloads it if one doesn't already exist.
 def get_discord_profile_pic(discord_id, avatar):
-    profile_pic_url = f'https://cdn.discordapp.com/avatars/{discord_id}/{avatar}.png'
-    response = requests.get(profile_pic_url)
 
-    if response.status_code == 200:
-        img = Image.open(BytesIO(response.content))
-        img_io = BytesIO()
-        img.save(img_io, format='PNG')
-        img_content = ContentFile(img_io.getvalue(), f'{discord_id}_{avatar}.png')
-        return img_content
+    file_name = f'{discord_id}_{avatar}.png'
+    directory = f'media/profile_pics'
+    file_path = os.path.join(directory, file_name)
+    
+    #Check if file already exists. 
+    if os.path.exists(file_path):
+        print('Profile Picture Exists!')
+        return open(file_path, 'rb')
     else:
-        error_message = f'Failed to retrieve profile picutre for {discord_id}.'
-        return CustomErrorResponse(success=False, error_message=error_message)
+        print('Downloading the profile picture')
+        # Download the file
+        profile_pic_url = f'https://cdn.discordapp.com/avatars/{discord_id}/{avatar}.png'
+        response = requests.get(profile_pic_url)
+        
+        if response.status_code == 200:            
+            img = Image.open(BytesIO(response.content))
+            img.save(file_path, format='PNG')
+            #img_content = ContentFile(img_io.getvalue(), f'{discord_id}_{avatar}.png')
+            print('saving the profile picture')
+            return open(file_path, 'rb')
+        
+        else:
+            error_message = f'Failed to retrieve profile picutre for {discord_id}.'
+            return CustomErrorResponse(success=False, error_message=error_message)
 
 # Gets details of the discord app
 def get_discord_app_details():
@@ -89,6 +103,7 @@ def get_discord_app_details():
 def exchange_code_for_token_data(code, redirect_uri):
     token_endpoint = 'https://discordapp.com/api/oauth2/token'
     
+
     if code: 
         discord_details = get_discord_app_details()
         # Request Access Token
