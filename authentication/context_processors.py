@@ -5,12 +5,13 @@ from authentication.models import RegisteredUser
 # enable access for every template by default. 
 
 def user_profile(request):
-    user_profile = None
+    registered_user = None
     
     if request.user.is_authenticated:
         if isinstance(request.user, RegisteredUser):
             try:
-                user_profile = RegisteredUser.objects.get(discord_user_id=request.user.discord_user_id)
+                registered_user = RegisteredUser.objects.get(discord_user_id=request.user.discord_user_id)
+                registered_user.is_authenticated = True
             except RegisteredUser.DoesNotExist:
-                user_profile = None
-    return { 'user_profile' : user_profile }
+                registered_user = None
+    return { 'registered_user' : registered_user }
