@@ -89,3 +89,13 @@ body {
     font-size: 0.65em;
     padding-top: 3px;
 }
+
+.nested-nav .nav-item {
+    display: block;
+    width: 100%;
+}
+
+.nested-nav .nav-link {
+    display: block;
+    width: 100;
+}
