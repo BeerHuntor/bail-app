@@ -52,5 +52,9 @@ class RegisteredUser(AbstractBaseUser, PermissionsMixin):
         print(f"date_registered: {self.date_registered}, type: {type(self.date_registered)}")
         super().save(*args, **kwargs)
 
+
+    def is_authenticated(self, request):
+        return True
+    
     def __str__(self):
         return self.username
