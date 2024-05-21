@@ -209,10 +209,10 @@ def get_all_users_guilds(token):
 # region Helper Functions
 """
 # Check if is police in the correct discord
-def is_police(user_data):
+def is_police(access_token):
     role_id = get_dictionary_key_from_value(ROLE_ID_TO_NAME, 'NEERP Police') # NEERP Police Role
 
-    guild_user_data = get_user_guild(user_data['access_token'])
+    guild_user_data = get_user_guild(access_token)
     
     if isinstance(guild_user_data, CustomErrorResponse):
         print(f'Error retrieving guild data: {guild_user_data.error_message}, {guild_user_data.error_message.text}')
